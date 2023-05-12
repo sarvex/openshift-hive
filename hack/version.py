@@ -46,11 +46,9 @@ def parse_branch_name(branch_name):
         [remote/]ocm-X.Y-mce-M.N it will be mce-M.N. If not parseable, it will be the empty
         string.
     """
-    m = MCE_BRANCH_RE.match(branch_name)
-    if m:
+    if m := MCE_BRANCH_RE.match(branch_name):
         return True, m.group(1), m.group(2), m.group(3)
-    m = OCM_BRANCH_RE.match(branch_name)
-    if m:
+    if m := OCM_BRANCH_RE.match(branch_name):
         return True, m.group(1), m.group(3), m.group(2)
     return False, '', '', ''
 
@@ -74,9 +72,7 @@ def remote_branch_info(hive_repo):
 
 
 def is_ancestor(hive_repo, descendant, ancestor):
-    return hive_repo.git.rev_list(
-        "--ancestry-path", "{}..{}".format(ancestor, descendant)
-    )
+    return hive_repo.git.rev_list("--ancestry-path", f"{ancestor}..{descendant}")
 
 
 def process_branch(hive_repo, branch_arg):
@@ -98,7 +94,7 @@ def process_branch(hive_repo, branch_arg):
     # force the user to say 'origin/ocm-X.Y[-mce-M.N]'. Accommodate...
     parsed, remote, _, _ = parse_branch_name(branch_arg)
     if parsed and not remote:
-        branch_arg = "origin/{}".format(branch_arg)
+        branch_arg = f"origin/{branch_arg}"
 
     # This will raise an exception if there's no such commit-ish
     commit_hash = hive_repo.rev_parse(branch_arg).hexsha
@@ -108,13 +104,13 @@ def process_branch(hive_repo, branch_arg):
     # branch. So we may need to try origin and upstream to find it.
     for remote in ("", "origin/", "upstream/"):
         master_branch = remote + HIVE_BRANCH_DEFAULT
-        log("Trying to find master at {}".format(master_branch))
+        log(f"Trying to find master at {master_branch}")
         try:
             master_hash = hive_repo.rev_parse(master_branch).hexsha
         except git.BadName:
-            log("Couldn't find master at `{}`".format(master_branch))
+            log(f"Couldn't find master at `{master_branch}`")
         else:
-            log("Found master at `{}`".format(master_branch))
+            log(f"Found master at `{master_branch}`")
             break
     else:
         log("Couldn't find master branch!")
@@ -135,44 +131,31 @@ def process_branch(hive_repo, branch_arg):
             # entry in this list AND we're not tracking master
             maybe_prefix = info["prefix"]
 
-    if commit_hash == master_hash or (is_master_ancestor and not maybe_prefix):
+    if commit_hash == master_hash:
         prefix = HIVE_VERSION_PREFIX
-        if commit_hash == master_hash or _mode == "standalone":
+        channels.append(CHANNEL_DEFAULT)
+    elif (is_master_ancestor and not maybe_prefix):
+        prefix = HIVE_VERSION_PREFIX
+        if _mode == "standalone":
             channels.append(CHANNEL_DEFAULT)
+    elif len(channels) > 1:
+        raise ValueError(
+            f"Found more than one channel candidate at {branch_arg}: {channels}.\nI can't handle this unless they're direct descendants of master -- which one would I use as the semver base?"
+        )
     else:
-        if len(channels) > 1:
-            raise ValueError(
-                "Found more than one channel candidate at {}: {}.\n".format(
-                    branch_arg, channels
-                )
-                + "I can't handle this unless they're direct descendants of master -- "
-                + "which one would I use as the semver base?"
-            )
         prefix = maybe_prefix
 
-    if not channels or not prefix:
-        if _mode != "standalone":
-            raise ValueError(
-                "Can't make sense of branch {}: expected {}, a direct descendant thereof, 'ocm-X.Y', or 'ocm-X.Y-mce-M.N'.".format(
-                    branch_arg, HIVE_BRANCH_DEFAULT
-                )
-            )
-        # In standalone mode, we don't care about channels. For prefix, we'll have the default
-        # (HIVE_VERSION_PREFIX) if commit_hash is at or descended from master. If we're on a
-        # commit that's the tip of an origin/ocm* branch, we'll have suitable channels & prefix
-        # and won't have gotten here. Otherwise -- e.g. if we're on a descendant commit of an
-        # ocm* branch -- we'll return an empty prefix, and the caller can decide what to put in
-        # there.
-        # TODO: Support descendants of ocm* branches using the appropriate prefix. But that's
-        # tricky because we have to handle the case where I'm descended from multiple different
-        # branches (e.g. right after we fork an ocm*).
+    if (not channels or not prefix) and _mode != "standalone":
+        raise ValueError(
+            f"Can't make sense of branch {branch_arg}: expected {HIVE_BRANCH_DEFAULT}, a direct descendant thereof, 'ocm-X.Y', or 'ocm-X.Y-mce-M.N'."
+        )
     return commit_hash, prefix, channels
 
 
 # gen_hive_version generates and returns the hive version eg. "1.2.3187-18827f6"
 def gen_hive_version(repo, commit_hash, prefix):
     # sha is the first 7 characters of commit_hash
-    sha = commit_hash[0:7]
+    sha = commit_hash[:7]
 
     # num commits is the number of git commits counted from the first commit to the provided commit_hash
     # this is the equivalent of running:

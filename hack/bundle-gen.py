@@ -24,7 +24,7 @@ HIVE_SUB_DIR = "operators/hive-operator"
 
 OPERATORHUB_HIVE_IMAGE_DEFAULT = "quay.io/openshift-hive/hive"
 
-REGISTRY_AUTH_FILE_DEFAULT = "{}/.docker/config.json".format(os.environ["HOME"])
+REGISTRY_AUTH_FILE_DEFAULT = f'{os.environ["HOME"]}/.docker/config.json'
 
 COMMUNITY_OPERATORS_HIVE_PKG_URL = "https://raw.githubusercontent.com/redhat-openshift-ecosystem/community-operators-prod/main/operators/hive-operator/hive.package.yaml"
 
@@ -104,9 +104,7 @@ def get_params():
 
     if not os.path.isfile(args.registry_auth_file):
         parser.error(
-            "--registry-auth-file ({}) does not exist, provide --registry-auth-file".format(
-                args.registry_auth_file
-            )
+            f"--registry-auth-file ({args.registry_auth_file}) does not exist, provide --registry-auth-file"
         )
 
     if args.verbose:
@@ -120,10 +118,10 @@ def get_params():
 # working directory (tagged with "v{hive_version}" eg. "v1.2.3187-18827f6") and then
 # pushes the image to quay.
 def build_and_push_image(registry_auth_file, hive_version, dry_run, build_engine):
-    container_name = "{}:v{}".format(OPERATORHUB_HIVE_IMAGE_DEFAULT, hive_version)
+    container_name = f"{OPERATORHUB_HIVE_IMAGE_DEFAULT}:v{hive_version}"
 
     if dry_run:
-        print("Skipping build of container {} due to dry-run".format(container_name))
+        print(f"Skipping build of container {container_name} due to dry-run")
         return
 
     if build_engine == "buildah":
@@ -148,14 +146,10 @@ def build_and_push_image(registry_auth_file, hive_version, dry_run, build_engine
         stderr=subprocess.DEVNULL,
     )
     if cp.returncode == 0:
-        print(
-            "Container {} already exists locally; not rebuilding.".format(
-                container_name
-            )
-        )
+        print(f"Container {container_name} already exists locally; not rebuilding.")
     else:
         # build/push the thing
-        print("Building container {}".format(container_name))
+        print(f"Building container {container_name}")
 
         cmd = build['build'].format(container_name).split()
         subprocess.run(cmd, check=True)
@@ -191,8 +185,8 @@ def get_previous_version(channel_name):
 # and deposits all artifacts in the specified bundle_dir.
 # If prev_version is not None, the CSV will include it as `replaces`.
 def generate_csv_base(bundle_dir, version, prev_version):
-    print("Writing bundle files to directory: %s" % bundle_dir)
-    print("Generating CSV for version: %s" % version)
+    print(f"Writing bundle files to directory: {bundle_dir}")
+    print(f"Generating CSV for version: {version}")
 
     crds_dir = "config/crds"
     csv_template = "config/templates/hive-csv-template.yaml"
@@ -244,23 +238,21 @@ def generate_csv_base(bundle_dir, version, prev_version):
 
     # Add our deployment spec for the hive operator:
     with open(deployment_spec, "r") as stream:
-        operator_components = []
         operator = yaml.load_all(stream, Loader=yaml.SafeLoader)
-        for doc in operator:
-            operator_components.append(doc)
+        operator_components = list(operator)
         operator_deployment = operator_components[1]
         csv["spec"]["install"]["spec"]["deployments"][0]["spec"] = operator_deployment[
             "spec"
         ]
 
     # Update the versions to include git hash:
-    csv["metadata"]["name"] = "hive-operator.v%s" % version
+    csv["metadata"]["name"] = f"hive-operator.v{version}"
     csv["spec"]["version"] = version
     if prev_version is not None:
-        csv["spec"]["replaces"] = "hive-operator.v%s" % prev_version
+        csv["spec"]["replaces"] = f"hive-operator.v{prev_version}"
 
     # Update the deployment to use the defined image:
-    image_ref = "%s:v%s" % (OPERATORHUB_HIVE_IMAGE_DEFAULT, version)
+    image_ref = f"{OPERATORHUB_HIVE_IMAGE_DEFAULT}:v{version}"
     csv["spec"]["install"]["spec"]["deployments"][0]["spec"]["template"]["spec"][
         "containers"
     ][0]["image"] = image_ref
@@ -271,11 +263,11 @@ def generate_csv_base(bundle_dir, version, prev_version):
     csv["metadata"]["annotations"]["createdAt"] = now.strftime("%Y-%m-%dT%H:%M:%SZ")
 
     # Write the CSV to disk:
-    csv_filename = "hive-operator.v%s.clusterserviceversion.yaml" % version
+    csv_filename = f"hive-operator.v{version}.clusterserviceversion.yaml"
     csv_file = os.path.join(version_dir, csv_filename)
     with open(csv_file, "w") as outfile:
         yaml.dump(csv, outfile, default_flow_style=False)
-    print("Wrote ClusterServiceVersion: %s" % csv_file)
+    print(f"Wrote ClusterServiceVersion: {csv_file}")
 
 
 def generate_package(package_file, channel, version):
@@ -286,7 +278,7 @@ def generate_package(package_file, channel, version):
       defaultChannel: %s
       packageName: hive-operator
 """
-    name = "hive-operator.v%s" % version
+    name = f"hive-operator.v{version}"
     document = document_template % (name, channel, channel)
 
     with open(package_file, "w") as outfile:
@@ -295,7 +287,7 @@ def generate_package(package_file, channel, version):
             outfile,
             default_flow_style=False,
         )
-    print("Wrote package: %s" % package_file)
+    print(f"Wrote package: {package_file}")
 
 
 def open_pr(
@@ -320,17 +312,17 @@ def open_pr(
 
     print()
     print()
-    print("Cloning %s" % fork_repo)
+    print(f"Cloning {fork_repo}")
     repo_full_path = os.path.join(work_dir, dir_name)
     # clone git repo
     try:
         git.Repo.clone_from(fork_repo, repo_full_path)
     except:
-        print("Failed to clone repo {} to {}".format(fork_repo, repo_full_path))
+        print(f"Failed to clone repo {fork_repo} to {repo_full_path}")
         raise
 
     # get to the right place on the filesystem
-    print("Working in %s" % repo_full_path)
+    print(f"Working in {repo_full_path}")
     os.chdir(repo_full_path)
 
     repo = git.Repo(repo_full_path)
@@ -355,13 +347,13 @@ def open_pr(
         print("Failed to checkout upstream/main")
         raise
 
-    branch_name = "update-hive-{}".format(new_version)
+    branch_name = f"update-hive-{new_version}"
 
-    print("Create branch {}".format(branch_name))
+    print(f"Create branch {branch_name}")
     try:
         repo.git.checkout("-b", branch_name)
     except:
-        print("Failed to checkout branch {}".format(branch_name))
+        print(f"Failed to checkout branch {branch_name}")
         raise
 
     # copy bundle directory
@@ -383,34 +375,38 @@ def open_pr(
     for channel in bundle["channels"]:
         if channel["name"] in update_channels:
             found = True
-            channel["currentCSV"] = "hive-operator.v{}".format(new_version)
+            channel["currentCSV"] = f"hive-operator.v{new_version}"
 
     if prev_version is None:
         # New channel! Sanity check a couple things.
         if found:
-            print("Unexpectedly got prev_version==None but found at least one of the following channels: {}".format(update_channels))
+            print(
+                f"Unexpectedly got prev_version==None but found at least one of the following channels: {update_channels}"
+            )
             sys.exit(1)
         if len(update_channels) != 1:
-            print("Expected exactly one channel name (got [{}])!".format(update_channels))
+            print(f"Expected exactly one channel name (got [{update_channels}])!")
             sys.exit(1)
         # All good.
-        print("Adding new channel {}".format(update_channels[0]))
+        print(f"Adding new channel {update_channels[0]}")
         # TODO: sort?
-        bundle["channels"].append({
-            "name": update_channels[0],
-            "currentCSV": "hive-operator.v{}".format(new_version),
-        })
-        pr_title = "Create channel {} for Hive community operator at {}".format(update_channels[0], new_version)
+        bundle["channels"].append(
+            {
+                "name": update_channels[0],
+                "currentCSV": f"hive-operator.v{new_version}",
+            }
+        )
+        pr_title = f"Create channel {update_channels[0]} for Hive community operator at {new_version}"
     else:
         if not found:
             print("did not find a CSV channel to update")
             sys.exit(1)
-        pr_title = "Update Hive community operator channel(s) [{}] to {}".format(update_channels, new_version)
+        pr_title = f"Update Hive community operator channel(s) [{update_channels}] to {new_version}"
 
     with open(bundle_manifests_file, "w") as outfile:
         yaml.dump(bundle, outfile, default_flow_style=False)
     print("\nUpdated bundle package:\n\n")
-    cmd = ("cat %s" % bundle_manifests_file).split()
+    cmd = f"cat {bundle_manifests_file}".split()
     subprocess.run(cmd)
     print()
 
@@ -418,16 +414,16 @@ def open_pr(
     print("Adding file")
     repo.git.add(HIVE_SUB_DIR)
 
-    print("Committing {}".format(pr_title))
+    print(f"Committing {pr_title}")
     try:
-        repo.git.commit("--signoff", "--message={}".format(pr_title))
+        repo.git.commit("--signoff", f"--message={pr_title}")
     except:
         print("Failed to commit")
         raise
     print()
 
     if not dry_run:
-        print("Pushing branch {}".format(branch_name))
+        print(f"Pushing branch {branch_name}")
         origin = repo.remotes.origin
         try:
             origin.push(branch_name, None, force=True)
@@ -438,7 +434,7 @@ def open_pr(
         # open PR
         client = gh.GitHubClient(dest_github_org, dest_github_reponame, "")
 
-        from_branch = "{}:{}".format(gh_username, branch_name)
+        from_branch = f"{gh_username}:{branch_name}"
         to_branch = "main"
 
         body = pr_title
@@ -451,7 +447,7 @@ def open_pr(
             sys.exit(1)
 
         json_content = json.loads(resp.content.decode("utf-8"))
-        print("PR opened: {}".format(json_content["html_url"]))
+        print(f'PR opened: {json_content["html_url"]}')
 
     else:
         print("Skipping branch push due to dry-run")
@@ -463,11 +459,11 @@ if __name__ == "__main__":
 
     hive_repo_dir = tempfile.TemporaryDirectory(prefix="hive-repo-")
 
-    print("Cloning {} to {}".format(args.hive_repo, hive_repo_dir.name))
+    print(f"Cloning {args.hive_repo} to {hive_repo_dir.name}")
     try:
         git.Repo.clone_from(args.hive_repo, hive_repo_dir.name)
     except:
-        print("Failed to clone repo {} to {}".format(args.hive_repo, hive_repo_dir.name))
+        print(f"Failed to clone repo {args.hive_repo} to {hive_repo_dir.name}")
         raise
 
     hive_repo = git.Repo(hive_repo_dir.name)
@@ -484,20 +480,20 @@ if __name__ == "__main__":
     bundle_dir = tempfile.TemporaryDirectory(prefix="hive-operator-bundle-")
     work_dir = tempfile.TemporaryDirectory(prefix="operatorhub-push-")
 
-    print("Working in {}".format(hive_repo_dir.name))
+    print(f"Working in {hive_repo_dir.name}")
     os.chdir(hive_repo_dir.name)
 
-    print("Checking out {}".format(hive_commit))
+    print(f"Checking out {hive_commit}")
     try:
         hive_repo.git.checkout(hive_commit)
     except:
-        print("Failed to checkout {}".format(hive_commit))
+        print(f"Failed to checkout {hive_commit}")
         raise
 
     hive_version = version.gen_hive_version(hive_repo, hive_commit, hive_version_prefix)
     prev_version = get_previous_version(channel)
     if hive_version == prev_version:
-        raise ValueError("Version {} already exists upstream".format(hive_version))
+        raise ValueError(f"Version {hive_version} already exists upstream")
 
     build_and_push_image(args.registry_auth_file, hive_version, args.dry_run, args.build_engine)
     generate_csv_base(bundle_dir.name, hive_version, prev_version)
@@ -506,7 +502,7 @@ if __name__ == "__main__":
     # redhat-openshift-ecosystem/community-operators-prod
     open_pr(
         work_dir.name,
-        "git@github.com:%s/community-operators-prod.git" % args.github_user,
+        f"git@github.com:{args.github_user}/community-operators-prod.git",
         "git@github.com:redhat-openshift-ecosystem/community-operators-prod.git",
         args.github_user,
         bundle_dir.name,
@@ -519,7 +515,7 @@ if __name__ == "__main__":
     # k8s-operatorhub/community-operators
     open_pr(
         work_dir.name,
-        "git@github.com:%s/community-operators.git" % args.github_user,
+        f"git@github.com:{args.github_user}/community-operators.git",
         "git@github.com:k8s-operatorhub/community-operators.git",
         args.github_user,
         bundle_dir.name,

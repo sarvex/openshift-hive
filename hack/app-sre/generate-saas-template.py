@@ -29,10 +29,10 @@ out_file = sys.argv[3]
 
 for f in (saas_template_stub, saas_object_file):
     if not os.path.isfile(f):
-        print("%s: No such file" % f)
+        print(f"{f}: No such file")
 
 if os.path.exists(out_file) and not os.path.isfile(out_file):
-    print("%s: Not a file" % out_file)
+    print(f"{out_file}: Not a file")
     sys.exit(1)
 
 with open(saas_object_file, 'r') as objf:
@@ -45,7 +45,7 @@ with open(saas_template_stub, 'r') as stubf:
 template['objects'] = objects
 
 msg = "Overwriting existing" if os.path.exists(out_file) else "Writing"
-print(msg + " output file %s" % out_file)
+print(f"{msg} output file {out_file}")
 
 with open(out_file, 'w') as outf:
     yaml.dump(template, outf, default_flow_style=False)
