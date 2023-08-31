@@ -29,7 +29,7 @@ require (
 	github.com/jonboulle/clockwork v0.2.2
 	github.com/json-iterator/go v1.1.12
 	github.com/krishicks/yaml-patch v0.0.11-0.20201210192933-7cea92d7f43e
-	github.com/miekg/dns v1.1.35
+	github.com/miekg/dns v1.1.55
 	github.com/modern-go/reflect2 v1.0.2
 	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/gomega v1.27.7
