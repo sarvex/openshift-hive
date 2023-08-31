@@ -913,7 +913,7 @@ github.com/matttproud/golang_protobuf_extensions/pbutil
 # github.com/mbilski/exhaustivestruct v1.2.0
 ## explicit; go 1.15
 github.com/mbilski/exhaustivestruct/pkg/analyzer
-# github.com/metal3-io/baremetal-operator/apis v0.2.0 => github.com/openshift/baremetal-operator/apis v0.0.0-20230531194024-8dde0991ffdd
+# github.com/metal3-io/baremetal-operator/apis v0.2.0 => github.com/openshift/baremetal-operator/apis v0.0.0-20230807180637-8119b0408ce9
 ## explicit; go 1.19
 github.com/metal3-io/baremetal-operator/apis/metal3.io/v1alpha1
 # github.com/metal3-io/baremetal-operator/pkg/hardwareutils v0.2.0 => github.com/openshift/baremetal-operator/pkg/hardwareutils v0.0.0-20230531194024-8dde0991ffdd
@@ -9424,8 +9424,8 @@ github.com/stoewer/go-strcase
 # github.com/stretchr/objx v0.5.0
 ## explicit; go 1.12
 github.com/stretchr/objx
-# github.com/stretchr/testify v1.8.2
-## explicit; go 1.13
+# github.com/stretchr/testify v1.8.4
+## explicit; go 1.20
 github.com/stretchr/testify/assert
 github.com/stretchr/testify/mock
 github.com/stretchr/testify/require
@@ -9683,8 +9683,8 @@ golang.org/x/crypto/pkcs12/internal/rc2
 golang.org/x/crypto/salsa20/salsa
 golang.org/x/crypto/ssh
 golang.org/x/crypto/ssh/internal/bcrypt_pbkdf
-# golang.org/x/exp v0.0.0-20220722155223-a9213eeb770e
-## explicit; go 1.18
+# golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1
+## explicit; go 1.20
 golang.org/x/exp/constraints
 golang.org/x/exp/slices
 # golang.org/x/exp/typeparams v0.0.0-20230224173230-c95f2b4c22f2
@@ -10999,7 +10999,7 @@ sigs.k8s.io/structured-merge-diff/v4/value
 sigs.k8s.io/yaml
 # github.com/openshift/hive/apis => ./apis
 # github.com/metal3-io/baremetal-operator => github.com/openshift/baremetal-operator v0.0.0-20230531194024-8dde0991ffdd
-# github.com/metal3-io/baremetal-operator/apis => github.com/openshift/baremetal-operator/apis v0.0.0-20230531194024-8dde0991ffdd
+# github.com/metal3-io/baremetal-operator/apis => github.com/openshift/baremetal-operator/apis v0.0.0-20230807180637-8119b0408ce9
 # github.com/metal3-io/baremetal-operator/pkg/hardwareutils => github.com/openshift/baremetal-operator/pkg/hardwareutils v0.0.0-20230531194024-8dde0991ffdd
 # github.com/terraform-providers/terraform-provider-nutanix => github.com/nutanix/terraform-provider-nutanix v1.5.0
 # k8s.io/cloud-provider-vsphere => github.com/openshift/cloud-provider-vsphere v1.19.1-0.20211222185833-7829863d0558
