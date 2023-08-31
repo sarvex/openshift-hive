@@ -24,7 +24,7 @@ require (
 	github.com/golangci/golangci-lint v1.52.2
 	github.com/google/go-cmp v0.5.9
 	github.com/google/uuid v1.3.0
-	github.com/gophercloud/utils v0.0.0-20230330070308-5bd5e1d608f8
+	github.com/gophercloud/utils v0.0.0-20230523080330-de873b9cf00d
 	github.com/heptio/velero v1.0.0
 	github.com/jonboulle/clockwork v0.2.2
 	github.com/json-iterator/go v1.1.12
@@ -372,6 +372,7 @@ require (
 	github.com/google/cel-go v0.12.6 // indirect
 	github.com/google/gnostic v0.6.9 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.7.0 // indirect
+	github.com/hashicorp/go-uuid v1.0.3 // indirect
 	github.com/jongio/azidext/go/azidext v0.4.0 // indirect
 	github.com/kylelemons/godebug v1.1.0 // indirect
 	github.com/libvirt/libvirt-go v5.10.0+incompatible // indirect
