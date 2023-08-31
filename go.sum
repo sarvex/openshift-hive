@@ -1059,6 +1059,8 @@ github.com/openshift/baremetal-operator/apis v0.0.0-20230531194024-8dde0991ffdd 
 github.com/openshift/baremetal-operator/apis v0.0.0-20230531194024-8dde0991ffdd/go.mod h1:yDY2x0vBph8L68TCL7GS/DxBkqoHn5bGO0k0bzVuDXY=
 github.com/openshift/baremetal-operator/pkg/hardwareutils v0.0.0-20230531194024-8dde0991ffdd h1:PK0kjpBvD0aoREZeRtmVRbA6EF6fFAYbC/UJ/J6YNrc=
 github.com/openshift/baremetal-operator/pkg/hardwareutils v0.0.0-20230531194024-8dde0991ffdd/go.mod h1:Dck2B6BQX3L+AE2Xe+LzrVPP1A/zQkhCU/aSVbsi7Nw=
+github.com/openshift/baremetal-operator/pkg/hardwareutils v0.0.0-20230807180637-8119b0408ce9 h1:FdN4yM7i+/sAD+ZgwLwZVaQ6+t1mVwEOD2eM6ICd6MQ=
+github.com/openshift/baremetal-operator/pkg/hardwareutils v0.0.0-20230807180637-8119b0408ce9/go.mod h1:Dck2B6BQX3L+AE2Xe+LzrVPP1A/zQkhCU/aSVbsi7Nw=
 github.com/openshift/build-machinery-go v0.0.0-20210712174854-1bb7fd1518d3/go.mod h1:b1BuldmJlbA/xYtdZvKi+7j5YGB44qJUJDZ9zwiNCfE=
 github.com/openshift/build-machinery-go v0.0.0-20230306181456-d321ffa04533 h1:mh3ZYs7kPIIe3UUY6tJcTExmtjnXXUu0MrBuK2W/Qvw=
 github.com/openshift/build-machinery-go v0.0.0-20230306181456-d321ffa04533/go.mod h1:b1BuldmJlbA/xYtdZvKi+7j5YGB44qJUJDZ9zwiNCfE=
