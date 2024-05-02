@@ -43,7 +43,7 @@ require (
 	github.com/openshift/hive/apis v0.0.0
 	github.com/openshift/installer v0.9.0-master.0.20230721132804-2c449439afd9
 	github.com/openshift/library-go v0.0.0-20230508110756-9b7abe2c9cbf
-	github.com/openshift/machine-api-operator v0.2.1-0.20230613002216-b15f199bf388
+	github.com/openshift/machine-api-operator ac84cecd1374
 	github.com/openshift/machine-api-provider-gcp v0.0.0
 	github.com/openshift/machine-api-provider-ibmcloud v0.0.0-20230124105206-50aa171a52e1
 	github.com/pkg/errors v0.9.1
