@@ -1,6 +1,6 @@
 # Create a builder container
 # golang:1.18.0-buster amd64
-FROM golang@sha256:7d39537344486528f8cdb3bd8adb98ab7f0f4236044b6944fed8631da35a4ce5 AS build
+FROM golang@sha256:5370d4968adad7e969494e744c6d28a93931b89f259accf4d08a94c30446d3a3 AS build
 WORKDIR /go/src/app
 
 # Create appuser to isolate potential vulnerabilities
